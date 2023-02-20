@@ -30,9 +30,7 @@ The code will look like the following:
 pipeline { 
    agent any 
    parameters { 
-          choice(name: "ZAP_SCAN", choices: ["zap-baseline. 
-py", "zap-full-scan.py"], description: "Parameter to choose 
-type of ZAP scan") 
+          choice(name: "ZAP_SCAN", choices: ["zap-baseline.py", "zap-full-scan.py"], description: "Parameter to choose type of ZAP scan") 
           string(name: "ENTER_
 ```
 
