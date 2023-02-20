@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+  parameters {
+      choice(name: "ZAP_SCAN", choices: ["zap-baseline.py", "zap-full-scan.py"], description: "Parameter to choose type of ZAP scan")
+      string(name: "ENTER_URL", defaultValue: "http://192.168.1.1:3000", trim: true, description: "Parameter for entering a URL to be scanned")
+  }
+  stages {
+     stage('Get Write Access'){
+     steps {
+           sh "chmod 777 \$(pwd)"
+     }
+     }
+  stage('Setting up OWASP ZAP docker container') {
+     steps {
+     echo "Starting container --> Start"
+           sh "docker run --rm -v \$(pwd):/zap/wrk/:rw --name owasp -dt owasp/zap2docker-live /bin/bash"
+     }
+  }
+     stage('Run Application Scan') {
+     steps {
+           sh "docker exec owasp ${params.ZAP_SCAN} -t ${params.ENTER_URL} -I -j --auto"
+           }
+     }
+     stage('Stop and Remove Container') {
+     steps {
+     echo "Removing container"
+          sh '''
+               docker stop owasp
+               '''
+          }
+     }
+     }
+}
